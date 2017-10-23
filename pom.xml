@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>activiti-cloud-connectors-parent</artifactId>
+  <version>7-201710-EA-salaboy_1514_twitter_connector-SNAPSHOT</version>
   <packaging>pom</packaging>
   <version>7-201711-EA-SNAPSHOT</version>
 
