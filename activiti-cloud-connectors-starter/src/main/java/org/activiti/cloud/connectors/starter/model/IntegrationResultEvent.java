@@ -53,4 +53,12 @@ public class IntegrationResultEvent {
         return variables;
     }
 
+    @Override
+    public String toString() {
+        return "IntegrationResultEvent{" +
+                "id='" + id + '\'' +
+                ", executionId='" + executionId + '\'' +
+                ", variables=" + variables +
+                '}';
+    }
 }

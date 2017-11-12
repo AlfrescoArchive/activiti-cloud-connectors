@@ -37,6 +37,9 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
     @Autowired
     private MessageChannel integrationResultsProducer;
 
+    @Autowired
+    private MessageChannel runtimeCmdProducer;
+
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='Mock'")
     public void mockTypeIntegrationRequestEventsWithProcessDefIdHeader(IntegrationRequestEvent event,
                                                                        @Header("processDefinitionId") String processDefinitionId) {
