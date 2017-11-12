@@ -14,6 +14,7 @@
   <version>7-201711-EA-salaboy__1524_remove__abstract__types-SNAPSHOT</version>
 
   <properties>
+    <version.activiti>7-201711-EA-SNAPSHOT</version.activiti>
     <version.activiti.cloud>${project.version}</version.activiti.cloud>
   </properties>
   <modules>
