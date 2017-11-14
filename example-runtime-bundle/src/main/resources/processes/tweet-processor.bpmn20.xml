@@ -27,15 +27,15 @@
     </extensionElements>
 
     <startEvent id="start"/>
-    <sequenceFlow id="flow1" sourceRef="start" targetRef="serviceTask"/>
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="serviceTaskProcessTweet"/>
 
-    <serviceTask id="serviceTask" implementation="Twitter Tweet" />
+    <serviceTask id="serviceTaskProcessTweet" implementation="Process English Tweet" />
 
-    <sequenceFlow id="flow2" sourceRef="serviceTask" targetRef="userTask"/>
+    <sequenceFlow id="flow2" sourceRef="serviceTaskProcessTweet" targetRef="serviceTaskRank"/>
 
-    <userTask id="userTask" name="Review Tweet" activiti:candidateGroups="hr"/>
+    <serviceTask id="serviceTaskRank" implementation="Rank Tweet" />
 
-    <sequenceFlow id="flow3" sourceRef="userTask" targetRef="end"/>
+    <sequenceFlow id="flow3" sourceRef="serviceTaskRank" targetRef="end"/>
 
     <endEvent id="end"/>
 
