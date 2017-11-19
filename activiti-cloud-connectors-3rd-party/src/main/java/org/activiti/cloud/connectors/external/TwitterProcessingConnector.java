@@ -56,12 +56,9 @@ public class TwitterProcessingConnector {
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['connectorType']=='Process English Tweet'")
     public synchronized void processEnglish(IntegrationRequestEvent event) throws InterruptedException {
 
-       // System.out.println("Just recieved an integration request event: " + event);
+        // System.out.println("Just recieved an integration request event: " + event);
 
         String message = String.valueOf(event.getVariables().get("message"));
-
-
-
 
         boolean sent = false;
         while (!sent) {
@@ -96,7 +93,7 @@ public class TwitterProcessingConnector {
                                                                         event.getExecutionId(),
                                                                         results);
 
-              //  System.out.println("I'm sending back an integratrion Result: " + ire);
+                //  System.out.println("I'm sending back an integratrion Result: " + ire);
                 integrationResultsProducer.send(MessageBuilder.withPayload(ire).build());
                 sent = true;
             } else {
@@ -104,5 +101,31 @@ public class TwitterProcessingConnector {
                 Thread.sleep(1000);
             }
         }
+    }
+
+    @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['connectorType']=='Filter English Tweet'")
+    public synchronized void filterEnglish(IntegrationRequestEvent event) throws InterruptedException {
+
+        // System.out.println("Just received an integration request event: " + event);
+
+        String message = String.valueOf(event.getVariables().get("message"));
+
+        Map<String, Object> results = new HashMap<>();
+        results.put("filterApplied",
+                    FilterController.currentFilter);
+        if (message.toLowerCase().contains(FilterController.currentFilter.toLowerCase())) {
+            System.out.println(" >>> YYYY : Tweet was approved to be ranked: " + message);
+            results.put("approved",
+                        true);
+        } else {
+            //System.out.println(" >>> NNNN: Tweet was not approved to be ranked!");
+            results.put("approved",
+                        false);
+        }
+
+        IntegrationResultEvent ire = new IntegrationResultEvent(UUID.randomUUID().toString(),
+                                                                event.getExecutionId(),
+                                                                results);
+        integrationResultsProducer.send(MessageBuilder.withPayload(ire).build());
     }
 }

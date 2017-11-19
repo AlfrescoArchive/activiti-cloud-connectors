@@ -23,20 +23,23 @@ public class Twitter4JConnector {
     private MessageChannel integrationResultsProducer;
 
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['connectorType']=='Tweet'")
-    public void twitter(IntegrationRequestEvent event) throws TwitterException {
-        Twitter twitter = TwitterFactory.getSingleton();
+    public void tweet(IntegrationRequestEvent event) throws TwitterException {
+        //Twitter twitter = TwitterFactory.getSingleton();
 
-        System.out.println("Just recieved an integration request event: " + event);
+        //System.out.println("Just received an integration request event: " + event);
 
         Map<String, Object> results = new HashMap<>();
 
-        System.out.println("\t>>>>>>> I'm tweeting in english: " + event.getVariables().get("message") + " \n");
+        System.out.println("#################################################################################");
+        System.out.println("#  Prize time!!! You WON!!! ");
+        System.out.println(" I'm tweeting to a Winner: " + event.getVariables().get("winner") + " \n");
+        System.out.println("#################################################################################");
 
         IntegrationResultEvent ire = new IntegrationResultEvent(UUID.randomUUID().toString(),
                                                                 event.getExecutionId(),
                                                                 results);
 
-        System.out.println("I'm sending back an integratrion Result: " + ire);
+      //  System.out.println("I'm sending back an integratrion Result: " + ire);
         integrationResultsProducer.send(MessageBuilder.withPayload(ire).build());
     }
 }

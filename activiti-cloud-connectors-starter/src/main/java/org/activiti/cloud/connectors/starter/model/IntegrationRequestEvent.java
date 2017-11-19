@@ -19,7 +19,12 @@ package org.activiti.cloud.connectors.starter.model;
 import java.util.Collections;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IntegrationRequestEvent {
+
+    private String id;
 
     private String processInstanceId;
 
@@ -31,6 +36,18 @@ public class IntegrationRequestEvent {
 
     //used by json deserialization
     public IntegrationRequestEvent() {
+    }
+
+    public IntegrationRequestEvent(String id,
+                                   String processInstanceId,
+                                   String processDefinitionId,
+                                   String executionId,
+                                   Map<String, Object> variables) {
+        this.id = id;
+        this.processInstanceId = processInstanceId;
+        this.processDefinitionId = processDefinitionId;
+        this.executionId = executionId;
+        this.variables = variables;
     }
 
     public IntegrationRequestEvent(String processInstanceId,

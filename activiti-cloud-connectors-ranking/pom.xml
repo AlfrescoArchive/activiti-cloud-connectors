@@ -7,7 +7,7 @@
     <version>7-201711-EA-salaboy_1514_twitter_connector-SNAPSHOT</version>
   </parent>
 
-  <artifactId>activiti-cloud-connectors-payments</artifactId>
+  <artifactId>activiti-cloud-connectors-ranking</artifactId>
 
   <dependencies>
     <dependency>

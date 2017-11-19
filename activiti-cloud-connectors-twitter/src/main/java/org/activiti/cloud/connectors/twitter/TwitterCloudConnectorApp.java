@@ -9,12 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -25,11 +24,11 @@ import twitter4j.TwitterStreamFactory;
 @SpringBootApplication
 @EnableActivitiCloudConnector
 @ComponentScan({"org.activiti.cloud.connectors.starter", "org.activiti.cloud.connectors.twitter"})
+@EnableScheduling
 public class TwitterCloudConnectorApp implements CommandLineRunner {
 
     @Autowired
     private MessageChannel runtimeCmdProducer;
-
 
     public static void main(String[] args) {
         SpringApplication.run(TwitterCloudConnectorApp.class,
@@ -54,9 +53,9 @@ public class TwitterCloudConnectorApp implements CommandLineRunner {
                 vars.put("location",
                          status.getUser().getLocation());
                 if (lang.equals("en")) {
-                    System.out.println("> Tweet: " + status.getText() + "\n");
-                    System.out.println("\t > Lang: " + status.getLang() + "\n");
-                    StartProcessInstanceCmd startProcessInstanceCmd = new StartProcessInstanceCmd("tweet-processor:1:0c448226-c95c-11e7-a336-e1525a47089b",
+                    //System.out.println("> Tweet: " + status.getText() + "\n");
+                    //System.out.println("\t > Lang: " + status.getLang() + "\n");
+                    StartProcessInstanceCmd startProcessInstanceCmd = new StartProcessInstanceCmd("tweet-processor:1:01937677-cd23-11e7-93c0-936684dc4390",
                                                                                                   vars);
                     runtimeCmdProducer.send(MessageBuilder.withPayload(startProcessInstanceCmd).build());
                 }
@@ -96,4 +95,5 @@ public class TwitterCloudConnectorApp implements CommandLineRunner {
         // sample() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.
         twitterStream.sample();
     }
+
 }
