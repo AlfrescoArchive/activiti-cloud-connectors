@@ -19,10 +19,6 @@
 
   <modules>
     <module>activiti-cloud-connectors-starter</module>
-    <module>activiti-cloud-connectors-twitter</module>
-    <module>activiti-cloud-connectors-ranking</module>
-    <module>activiti-cloud-connectors-3rd-party</module>
-    <module>example-runtime-bundle</module>
   </modules>
 
   <properties>
