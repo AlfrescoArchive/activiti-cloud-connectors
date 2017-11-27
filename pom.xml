@@ -20,7 +20,7 @@
   <modules>
     <module>activiti-cloud-connectors-starter</module>
   </modules>
-  
+
 
   <repositories>
     <repository>

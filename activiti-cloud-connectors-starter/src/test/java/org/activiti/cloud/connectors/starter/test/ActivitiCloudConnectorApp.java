@@ -19,6 +19,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.MessageBuilder;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootApplication
 @EnableActivitiCloudConnector
 @ComponentScan("org.activiti.cloud.connectors.starter")
@@ -40,20 +42,19 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
     @Autowired
     private MessageChannel runtimeCmdProducer;
 
+
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='Mock'")
     public void mockTypeIntegrationRequestEventsWithProcessDefIdHeader(IntegrationRequestEvent event,
                                                                        @Header("processDefinitionId") String processDefinitionId) {
-        System.out.println("Integration Request Event Recieved: ");
-        System.out.println("\t Event:  " + event.toString());
-        System.out.println("\t Type:  " + "Mock");
-        System.out.println("\t ProcessDefId in Header:  " + processDefinitionId);
+
+        assertThat(event).isNotNull();
+        assertThat(runtimeCmdProducer).isNotNull();
         Map<String, Object> resultVariables = new HashMap<String, Object>();
         resultVariables.put("var1",
                             event.getVariables().get("var1"));
         resultVariables.put("var2",
                             Long.valueOf(event.getVariables().get("var2").toString()) + 1);
-        IntegrationResultEvent integrationResultEvent = new IntegrationResultEvent(UUID.randomUUID().toString(),
-                                                                                   event.getExecutionId(),
+        IntegrationResultEvent integrationResultEvent = new IntegrationResultEvent(event.getExecutionId(),
                                                                                    resultVariables);
         Message<IntegrationResultEvent> message = MessageBuilder.withPayload(integrationResultEvent).build();
         integrationResultsProducer.send(message);
@@ -61,7 +62,7 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
 
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER)
     public void consumePaymentIntegrationEvents(IntegrationRequestEvent event) {
-        System.out.println("Integration Request Event Recieved: (no filter) ");
-        System.out.println("\t Event:  " + event.toString());
+        assertThat(event).isNotNull();
+        assertThat(runtimeCmdProducer).isNotNull();
     }
 }

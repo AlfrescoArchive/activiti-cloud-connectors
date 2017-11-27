@@ -32,19 +32,12 @@ public class IntegrationResultEvent {
 
     //used by json deserialization
     public IntegrationResultEvent() {
+        this.id = UUID.randomUUID().toString();
     }
 
     public IntegrationResultEvent(String executionId,
                                   Map<String, Object> variables) {
-        this.id = UUID.randomUUID().toString();
-        this.executionId = executionId;
-        this.variables = variables;
-    }
-
-    public IntegrationResultEvent(String id,
-                                  String executionId,
-                                  Map<String, Object> variables) {
-        this.id = id;
+        this();
         this.executionId = executionId;
         this.variables = variables;
     }
