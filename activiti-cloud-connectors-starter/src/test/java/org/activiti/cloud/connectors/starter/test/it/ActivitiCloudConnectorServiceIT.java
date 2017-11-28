@@ -61,11 +61,6 @@ public class ActivitiCloudConnectorServiceIT {
     public final static String PROCESS_DEFINITION_ID = "myProcessDefinitionId";
     public final static String EXECUTION_ID = "executionId-" + UUID.randomUUID().toString();
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
     @EnableAutoConfiguration
     public static class StreamHandler {
 
