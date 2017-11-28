@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>activiti-cloud-connectors-parent</artifactId>
-  <version>7-201711-EA-SNAPSHOT</version>
+  <version>7-201711-EA-salaboy_1556_rename_connector_starter-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -17,7 +17,7 @@
   </properties>
 
   <modules>
-    <module>activiti-cloud-connectors-starter</module>
+    <module>activiti-cloud-starter-connector</module>
   </modules>
 
 
