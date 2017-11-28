@@ -19,9 +19,11 @@ package org.activiti.cloud.connectors.starter.test.it;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.activiti.cloud.connectors.starter.model.IntegrationRequestEvent;
 import org.activiti.cloud.connectors.starter.model.IntegrationResultEvent;
+import org.activiti.cloud.services.api.commands.StartProcessInstanceCmd;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -43,9 +45,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@EnableBinding(RuntimeMockStreams.class)
+@EnableBinding({RuntimeMockStreams.class, MockProcessEngineChannels.class})
 public class ActivitiCloudConnectorServiceIT {
-
 
     @Autowired
     private MessageChannel integrationEventsProducer;
@@ -53,7 +54,12 @@ public class ActivitiCloudConnectorServiceIT {
     @ClassRule
     public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
-    public static boolean integrationResultArrived = false;
+    public static AtomicInteger integrationResultEventsCounter = new AtomicInteger();
+    public static boolean startProcessInstanceCmdArrived = false;
+
+    public final static String PROCESS_INSTANCE_ID = "processInstanceId-" + UUID.randomUUID().toString();
+    public final static String PROCESS_DEFINITION_ID = "myProcessDefinitionId";
+    public final static String EXECUTION_ID = "executionId-" + UUID.randomUUID().toString();
 
     @Before
     public void setUp() throws Exception {
@@ -64,19 +70,25 @@ public class ActivitiCloudConnectorServiceIT {
     public static class StreamHandler {
 
         @StreamListener(value = RuntimeMockStreams.INTEGRATION_RESULT_CONSUMER)
-        public void consumeIntegrationResults(IntegrationResultEvent integrationResultEvent) throws InterruptedException {
+        public void consumeIntegrationResultsMock(IntegrationResultEvent integrationResultEvent) throws InterruptedException {
 
-            System.out.println(">>> Result Recieved Back from Connector: " + integrationResultEvent);
-            String executionId = integrationResultEvent.getExecutionId();
             assertThat(integrationResultEvent.getVariables().get("var2")).isEqualTo(2);
+            assertThat(integrationResultEvent.getExecutionId()).isEqualTo(EXECUTION_ID);
+            integrationResultEventsCounter.incrementAndGet();
+        }
 
+        @StreamListener(value = MockProcessEngineChannels.COMMAND_CONSUMER)
+        public void consumeProcessRuntimeCmd(StartProcessInstanceCmd startProcessInstanceCmd) throws InterruptedException {
 
-            integrationResultArrived = true;
+            assertThat(startProcessInstanceCmd.getVariables().get("var2")).isEqualTo(2);
+            assertThat(startProcessInstanceCmd.getProcessDefinitionId()).isEqualTo("MyOtherProcessDef");
+
+            startProcessInstanceCmdArrived = true;
         }
     }
 
     @Test
-    public void findAllShouldReturnAllAvailableEvents() throws Exception {
+    public void integrationEventShouldBePickedByConnectorMock() throws Exception {
         //given
 
         Map<String, Object> variables = new HashMap<>();
@@ -84,29 +96,35 @@ public class ActivitiCloudConnectorServiceIT {
                       "value1");
         variables.put("var2",
                       new Long(1));
-        String processDefId = "myProcessDefinitionId";
-        IntegrationRequestEvent ire = new IntegrationRequestEvent("processInstanceId-" + UUID.randomUUID().toString(),
-                                                                  processDefId,
-                                                                  "executionId-" + UUID.randomUUID().toString(),
+
+        IntegrationRequestEvent ire = new IntegrationRequestEvent(PROCESS_INSTANCE_ID,
+                                                                  PROCESS_DEFINITION_ID,
+                                                                  EXECUTION_ID,
                                                                   variables);
 
         Message<IntegrationRequestEvent> message = MessageBuilder.withPayload(ire)
                 .setHeader("type",
                            "Mock")
-                .setHeader("processDefinitionId",
-                           // this is option and only if we are interested in filtering by processDefinitionId
-                           processDefId)
                 .build();
         integrationEventsProducer.send(message);
 
-        while (!integrationResultArrived) {
-            System.out.println("Waiting for result to arrive ...");
+        message = MessageBuilder.withPayload(ire)
+                .setHeader("type",
+                           "MockProcessRuntime")
+                .build();
+        integrationEventsProducer.send(message);
+
+        while (!startProcessInstanceCmdArrived) {
+            System.out.println("Waiting for cmd to arrive ...");
             Thread.sleep(100);
         }
 
+        assertThat(startProcessInstanceCmdArrived).isTrue();
 
-        assertThat(integrationResultArrived).isTrue();
-
+        while (integrationResultEventsCounter.get() < 2) {
+            System.out.println("Waiting for results to arrive ...");
+            Thread.sleep(100);
+        }
     }
 }
 
