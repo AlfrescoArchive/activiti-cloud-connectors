@@ -44,6 +44,7 @@ public class IntegrationRequestEvent {
                                    String processDefinitionId,
                                    String executionId,
                                    Map<String, Object> variables) {
+        this();
         this.processInstanceId = processInstanceId;
         this.processDefinitionId = processDefinitionId;
         this.executionId = executionId;
