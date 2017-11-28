@@ -45,10 +45,11 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
 
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='Mock'")
     public void mockTypeIntegrationRequestEvents(IntegrationRequestEvent event) {
-
-        Map<String, Object> resultVariables = verifyEventAndCreateResults(event);
+        verifyEventAndCreateResults(event);
+        Map<String, Object> resultVariables = createResultVariables(event);
         IntegrationResultEvent integrationResultEvent = new IntegrationResultEvent(event.getExecutionId(),
                                                                                    resultVariables);
+        assertThat(integrationResultEvent.getId()).isNotEmpty();
         Message<IntegrationResultEvent> message = MessageBuilder.withPayload(integrationResultEvent).build();
         integrationResultsProducer.send(message);
     }
@@ -58,8 +59,8 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
      */
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='MockProcessRuntime'")
     public void mockTypeIntegrationRequestEventsStartProcess(IntegrationRequestEvent event) {
-
-        Map<String, Object> resultVariables = verifyEventAndCreateResults(event);
+        verifyEventAndCreateResults(event);
+        Map<String, Object> resultVariables = createResultVariables(event);
 
         StartProcessInstanceCmd startProcessInstanceCmd = new StartProcessInstanceCmd(OTHER_PROCESS_DEF,
                                                                                       resultVariables);
@@ -68,16 +69,20 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
 
         IntegrationResultEvent integrationResultEvent = new IntegrationResultEvent(event.getExecutionId(),
                                                                                    resultVariables);
+        assertThat(integrationResultEvent.getId()).isNotEmpty();
         Message<IntegrationResultEvent> message = MessageBuilder.withPayload(integrationResultEvent).build();
         integrationResultsProducer.send(message);
     }
 
-    private Map<String, Object> verifyEventAndCreateResults(IntegrationRequestEvent event) {
+    private void verifyEventAndCreateResults(IntegrationRequestEvent event) {
+        assertThat(event.getId()).isNotEmpty();
         assertThat(event).isNotNull();
         assertThat(event.getExecutionId()).isNotNull();
         assertThat(event.getProcessDefinitionId()).isNotNull();
         assertThat(event.getProcessInstanceId()).isNotNull();
+    }
 
+    private Map<String, Object> createResultVariables(IntegrationRequestEvent event) {
         Map<String, Object> resultVariables = new HashMap<String, Object>();
         resultVariables.put("var1",
                             event.getVariables().get("var1"));

@@ -10,10 +10,5 @@ import org.springframework.stereotype.Component;
 public class CloudConnectorIntegrationHandler {
 
 
-    @Autowired
-    public CloudConnectorIntegrationHandler() {
-
-    }
-
 
 }
