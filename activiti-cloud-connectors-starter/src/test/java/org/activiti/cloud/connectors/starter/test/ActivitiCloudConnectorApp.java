@@ -46,16 +46,7 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='Mock'")
     public void mockTypeIntegrationRequestEvents(IntegrationRequestEvent event) {
 
-        assertThat(event).isNotNull();
-        assertThat(event.getExecutionId()).isNotNull();
-        assertThat(event.getProcessDefinitionId()).isNotNull();
-        assertThat(event.getProcessInstanceId()).isNotNull();
-
-        Map<String, Object> resultVariables = new HashMap<String, Object>();
-        resultVariables.put("var1",
-                            event.getVariables().get("var1"));
-        resultVariables.put("var2",
-                            Long.valueOf(event.getVariables().get("var2").toString()) + 1);
+        Map<String, Object> resultVariables = verifyEventAndCreateResults(event);
         IntegrationResultEvent integrationResultEvent = new IntegrationResultEvent(event.getExecutionId(),
                                                                                    resultVariables);
         Message<IntegrationResultEvent> message = MessageBuilder.withPayload(integrationResultEvent).build();
@@ -68,16 +59,7 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
     @StreamListener(value = CloudConnectorChannels.INTEGRATION_EVENT_CONSUMER, condition = "headers['type']=='MockProcessRuntime'")
     public void mockTypeIntegrationRequestEventsStartProcess(IntegrationRequestEvent event) {
 
-        assertThat(event).isNotNull();
-        assertThat(event.getExecutionId()).isNotNull();
-        assertThat(event.getProcessDefinitionId()).isNotNull();
-        assertThat(event.getProcessInstanceId()).isNotNull();
-
-        Map<String, Object> resultVariables = new HashMap<String, Object>();
-        resultVariables.put("var1",
-                            event.getVariables().get("var1"));
-        resultVariables.put("var2",
-                            Long.valueOf(event.getVariables().get("var2").toString()) + 1);
+        Map<String, Object> resultVariables = verifyEventAndCreateResults(event);
 
         StartProcessInstanceCmd startProcessInstanceCmd = new StartProcessInstanceCmd(OTHER_PROCESS_DEF,
                                                                                       resultVariables);
@@ -88,5 +70,19 @@ public class ActivitiCloudConnectorApp implements CommandLineRunner {
                                                                                    resultVariables);
         Message<IntegrationResultEvent> message = MessageBuilder.withPayload(integrationResultEvent).build();
         integrationResultsProducer.send(message);
+    }
+
+    private Map<String, Object> verifyEventAndCreateResults(IntegrationRequestEvent event) {
+        assertThat(event).isNotNull();
+        assertThat(event.getExecutionId()).isNotNull();
+        assertThat(event.getProcessDefinitionId()).isNotNull();
+        assertThat(event.getProcessInstanceId()).isNotNull();
+
+        Map<String, Object> resultVariables = new HashMap<String, Object>();
+        resultVariables.put("var1",
+                            event.getVariables().get("var1"));
+        resultVariables.put("var2",
+                            Long.valueOf(event.getVariables().get("var2").toString()) + 1);
+        return resultVariables;
     }
 }
