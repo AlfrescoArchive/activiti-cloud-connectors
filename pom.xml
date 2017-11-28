@@ -11,7 +11,6 @@
   <artifactId>activiti-cloud-connectors-parent</artifactId>
   <version>7-201711-EA-salaboy_1514_twitter_connector-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <version>7-201711-EA-SNAPSHOT</version>
 
   <properties>
     <version.activiti.cloud.connectors>${project.version}</version.activiti.cloud.connectors>
