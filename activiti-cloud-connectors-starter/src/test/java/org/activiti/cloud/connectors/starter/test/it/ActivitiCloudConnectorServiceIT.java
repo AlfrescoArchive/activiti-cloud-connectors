@@ -29,11 +29,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
-import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.*;
@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Profile(ConnectorsITStreamHandlers.CONNECTOR_IT)
+@ActiveProfiles(ConnectorsITStreamHandlers.CONNECTOR_IT)
 public class ActivitiCloudConnectorServiceIT {
 
     @Autowired
@@ -53,9 +53,9 @@ public class ActivitiCloudConnectorServiceIT {
     @Autowired
     private ConnectorsITStreamHandlers streamHandler;
 
-    public final static String PROCESS_INSTANCE_ID = "processInstanceId-" + UUID.randomUUID().toString();
-    public final static String PROCESS_DEFINITION_ID = "myProcessDefinitionId";
-    public final static String EXECUTION_ID = "executionId-" + UUID.randomUUID().toString();
+    private final static String PROCESS_INSTANCE_ID = "processInstanceId-" + UUID.randomUUID().toString();
+    private final static String PROCESS_DEFINITION_ID = "myProcessDefinitionId";
+    private final static String EXECUTION_ID = "executionId-" + UUID.randomUUID().toString();
 
     @Before
     public void setUp() throws Exception {
@@ -70,7 +70,7 @@ public class ActivitiCloudConnectorServiceIT {
         variables.put("var1",
                       "value1");
         variables.put("var2",
-                      new Long(1));
+                      1L);
 
         IntegrationRequestEvent ire = new IntegrationRequestEvent(PROCESS_INSTANCE_ID,
                                                                   PROCESS_DEFINITION_ID,
