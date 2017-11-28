@@ -19,33 +19,29 @@ package org.activiti.cloud.connectors.starter.test.it;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.activiti.cloud.connectors.starter.model.IntegrationRequestEvent;
-import org.activiti.cloud.connectors.starter.model.IntegrationResultEvent;
-import org.activiti.cloud.services.api.commands.StartProcessInstanceCmd;
+import org.activiti.cloud.connectors.starter.test.WaitUtil;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@EnableBinding({RuntimeMockStreams.class, MockProcessEngineChannels.class})
+@Profile(ConnectorsITStreamHandlers.CONNECTOR_IT)
 public class ActivitiCloudConnectorServiceIT {
 
     @Autowired
@@ -54,32 +50,16 @@ public class ActivitiCloudConnectorServiceIT {
     @ClassRule
     public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
-    public static AtomicInteger integrationResultEventsCounter = new AtomicInteger();
-    public static boolean startProcessInstanceCmdArrived = false;
+    @Autowired
+    private ConnectorsITStreamHandlers streamHandler;
 
     public final static String PROCESS_INSTANCE_ID = "processInstanceId-" + UUID.randomUUID().toString();
     public final static String PROCESS_DEFINITION_ID = "myProcessDefinitionId";
     public final static String EXECUTION_ID = "executionId-" + UUID.randomUUID().toString();
 
-    @EnableAutoConfiguration
-    public static class StreamHandler {
-
-        @StreamListener(value = RuntimeMockStreams.INTEGRATION_RESULT_CONSUMER)
-        public void consumeIntegrationResultsMock(IntegrationResultEvent integrationResultEvent) throws InterruptedException {
-
-            assertThat(integrationResultEvent.getVariables().get("var2")).isEqualTo(2);
-            assertThat(integrationResultEvent.getExecutionId()).isEqualTo(EXECUTION_ID);
-            integrationResultEventsCounter.incrementAndGet();
-        }
-
-        @StreamListener(value = MockProcessEngineChannels.COMMAND_CONSUMER)
-        public void consumeProcessRuntimeCmd(StartProcessInstanceCmd startProcessInstanceCmd) throws InterruptedException {
-
-            assertThat(startProcessInstanceCmd.getVariables().get("var2")).isEqualTo(2);
-            assertThat(startProcessInstanceCmd.getProcessDefinitionId()).isEqualTo("MyOtherProcessDef");
-
-            startProcessInstanceCmdArrived = true;
-        }
+    @Before
+    public void setUp() throws Exception {
+        streamHandler.setExecutionId(EXECUTION_ID);
     }
 
     @Test
@@ -109,17 +89,12 @@ public class ActivitiCloudConnectorServiceIT {
                 .build();
         integrationEventsProducer.send(message);
 
-        while (!startProcessInstanceCmdArrived) {
-            System.out.println("Waiting for cmd to arrive ...");
-            Thread.sleep(100);
-        }
+        WaitUtil.waitFor(streamHandler.isStartProcessInstanceCmdArrived());
 
-        assertThat(startProcessInstanceCmdArrived).isTrue();
+        assertThat(streamHandler.isStartProcessInstanceCmdArrived()).isTrue();
 
-        while (integrationResultEventsCounter.get() < 2) {
-            System.out.println("Waiting for results to arrive ...");
-            Thread.sleep(100);
-        }
+        WaitUtil.waitForCounterGreaterThanThreshold(streamHandler.getIntegrationResultEventsCounter(),
+                                                    2);
     }
 }
 
