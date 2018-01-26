@@ -25,18 +25,18 @@ public class IntegrationResultEventBuilder {
 
     private final IntegrationRequestEvent requestEvent;
 
-    public static IntegrationResultEventBuilder resultFor(IntegrationRequestEvent requestEvent) {
-        return new IntegrationResultEventBuilder(requestEvent)
-                .withExecutionId(requestEvent.getExecutionId())
-                .withFlowNodeId(requestEvent.getFlowNodeId())
-                .withTargetApplication(requestEvent.getApplicationName());
-    }
-
     private IntegrationResultEvent integrationResultEvent;
 
     private IntegrationResultEventBuilder(IntegrationRequestEvent requestEvent) {
         this.requestEvent = requestEvent;
         this.integrationResultEvent = new IntegrationResultEvent();
+    }
+
+    public static IntegrationResultEventBuilder resultFor(IntegrationRequestEvent requestEvent) {
+        return new IntegrationResultEventBuilder(requestEvent)
+                .withExecutionId(requestEvent.getExecutionId())
+                .withFlowNodeId(requestEvent.getFlowNodeId())
+                .withTargetApplication(requestEvent.getApplicationName());
     }
 
     private IntegrationResultEventBuilder withExecutionId(String executionId) {
