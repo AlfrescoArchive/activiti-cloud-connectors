@@ -18,7 +18,9 @@ package org.activiti.cloud.connectors.starter.model;
 
 import java.util.Collections;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.springframework.messaging.Message;
 
 import static org.activiti.test.Assertions.assertThat;
 
@@ -56,5 +58,24 @@ public class IntegrationResultEventBuilderTest {
                 .hasTargetApplication(APP_NAME)
                 .hasVariables(Collections.singletonMap(VAR,
                                                        VALUE));
+    }
+
+    @Test
+    public void shouldBuildMessageWithTargetApplicationHeader() throws Exception {
+        //given
+        IntegrationRequestEvent integrationRequestEvent = new IntegrationRequestEvent(PROC_INST_ID,
+                                                                                      PROC_DEF_ID,
+                                                                                      EXEC_ID,
+                                                                                      Collections.emptyMap());
+        integrationRequestEvent.setApplicationName(APP_NAME);
+
+        //when
+        Message<IntegrationResultEvent> message = IntegrationResultEventBuilder
+                .resultFor(integrationRequestEvent)
+                .buildMessage();
+
+        //then
+        Assertions.assertThat(message.getHeaders()).containsEntry("targetApplication",
+                                                                  APP_NAME);
     }
 }
