@@ -130,7 +130,8 @@
         </executions>
         <configuration>
           <packages>
-            <package>org.activiti.runtime.api.model</package>
+            <package>org.activiti.api.process.model</package>
+            <package>org.activiti.cloud.api.process.model</package>
           </packages>
 
           <!-- whether generated assertions classes can be inherited with consistent assertion chaining -->
