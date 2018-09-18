@@ -12,6 +12,7 @@
   <packaging>pom</packaging>
   <url>http://activiti.org</url>
   <modules>
+    <module>activiti-cloud-connectors-dependencies</module>
     <module>activiti-cloud-starter-connector</module>
   </modules>
   <scm>
