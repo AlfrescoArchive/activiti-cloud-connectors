@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.activiti.cloud.build</groupId>
     <artifactId>activiti-cloud-parent</artifactId>
-    <version>7.0.36</version>
+    <version>7.0.0.Beta5</version>
   </parent>
   <groupId>org.activiti.cloud.connector</groupId>
   <artifactId>activiti-cloud-connectors-parent</artifactId>
-  <version>7.0.51</version>
+  <version>7.0.0.Beta5</version>
   <packaging>pom</packaging>
   <url>http://activiti.org</url>
   <modules>
@@ -39,9 +39,9 @@
   </repositories>
 
   <properties>
-    <activiti-cloud-build.version>7.0.36</activiti-cloud-build.version>
-    <activiti-cloud-service-common.version>7.0.64</activiti-cloud-service-common.version>
-    <activiti-cloud-connectors.version>${project.version}</activiti-cloud-connectors.version>
+    <activiti-cloud-build.version>7.0.0.Beta5</activiti-cloud-build.version>
+    <activiti-cloud-service-common.version>7.0.0.Beta5</activiti-cloud-service-common.version>
+    <activiti-cloud-connectors.version>7.0.0.Beta5</activiti-cloud-connectors.version>
   </properties>
   
   <dependencyManagement>
