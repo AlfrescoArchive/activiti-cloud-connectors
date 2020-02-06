@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.activiti.cloud.build</groupId>
     <artifactId>activiti-cloud-parent</artifactId>
-    <version>7.1.33</version>
+    <version>7.1.0.M6</version>
   </parent>
   <groupId>org.activiti.cloud.connector</groupId>
   <artifactId>activiti-cloud-connectors-parent</artifactId>
-  <version>7.1.159</version>
+  <version>7.1.0.M6</version>
   <packaging>pom</packaging>
   <modules>
     <module>dependencies-tests</module>
@@ -18,9 +18,9 @@
   </modules>
   <properties>
     <project.scm.repository>activiti-cloud-connectors</project.scm.repository>
-    <activiti-cloud-build.version>7.1.33</activiti-cloud-build.version>
-    <activiti-cloud-service-common.version>7.1.166</activiti-cloud-service-common.version>
-    <activiti-cloud-connectors.version>${project.version}</activiti-cloud-connectors.version>
+    <activiti-cloud-build.version>7.1.0.M6</activiti-cloud-build.version>
+    <activiti-cloud-service-common.version>7.1.0.M6</activiti-cloud-service-common.version>
+    <activiti-cloud-connectors.version>7.1.0.M6</activiti-cloud-connectors.version>
   </properties>
   <dependencyManagement>
     <dependencies>
