@@ -32,10 +32,6 @@ public class IntegrationErrorBuilder {
     private IntegrationErrorImpl integrationResult;
     private Exception error;
 
-    private IntegrationErrorBuilder(IntegrationRequest integrationRequest) {
-        this.integrationRequest = integrationRequest;
-    }
-
     private IntegrationErrorBuilder(IntegrationRequest integrationRequest, 
                                     ConnectorProperties connectorProperties, 
                                     Exception error) {
@@ -52,17 +48,14 @@ public class IntegrationErrorBuilder {
             this.integrationResult.setServiceVersion(connectorProperties.getServiceVersion());
             this.integrationResult.setServiceName(connectorProperties.getServiceName());
         }
-
     }
 
-    public static IntegrationErrorBuilder errorFor(IntegrationRequest integrationRequest) {
-        return new IntegrationErrorBuilder(integrationRequest);
-    }
-
-    public IntegrationErrorBuilder withError(Exception error) {
-        this.error = error;
-        
-        return this;
+    public static IntegrationErrorBuilder errorFor(IntegrationRequest integrationRequest,
+                                                   ConnectorProperties connectorProperties,
+                                                   Exception error) {
+        return new IntegrationErrorBuilder(integrationRequest,
+                                           connectorProperties,
+                                           error);
     }
 
     public IntegrationError build() {

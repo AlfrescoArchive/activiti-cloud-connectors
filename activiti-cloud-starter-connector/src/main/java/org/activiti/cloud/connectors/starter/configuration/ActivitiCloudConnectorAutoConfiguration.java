@@ -29,8 +29,10 @@ public class ActivitiCloudConnectorAutoConfiguration {
     
     @Bean
     @ConditionalOnMissingBean
-    public IntegrationErrorHandler integrationErrorHandler(IntegrationErrorSender integrationErrorSender) {
-        return new IntegrationErrorHandlerImpl(integrationErrorSender);
+    public IntegrationErrorHandler integrationErrorHandler(IntegrationErrorSender integrationErrorSender,
+                                                           ConnectorProperties connectorProperties) {
+        return new IntegrationErrorHandlerImpl(integrationErrorSender,
+                                               connectorProperties);
     }
     
     @Bean
