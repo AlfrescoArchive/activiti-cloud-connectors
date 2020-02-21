@@ -1,7 +1,6 @@
 package org.activiti.cloud.connectors.starter.channels;
 
 import org.activiti.cloud.api.process.model.IntegrationRequest;
-import org.activiti.cloud.connectors.starter.configuration.ConnectorProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
@@ -14,22 +13,23 @@ public class IntegrationChannelResolverImpl implements IntegrationChannelResolve
 
     private final BinderAwareChannelResolver resolver;
 
-    private final ConnectorProperties connectorProperties;
+    private final IntegrationResultDestinationBuilder integrationResultDestinationBuilder;
 
     @Autowired
     public IntegrationChannelResolverImpl(BinderAwareChannelResolver resolver, 
-                                          ConnectorProperties connectorProperties) {
+                                          IntegrationResultDestinationBuilder integrationResultDestinationBuilder) {
         this.resolver = resolver;
-        this.connectorProperties = connectorProperties;
+        this.integrationResultDestinationBuilder = integrationResultDestinationBuilder;
     }
     
     @Override
     public MessageChannel resolveDestination(IntegrationRequest event) {
-        String destination = (resultDestinationOverride == null || resultDestinationOverride.isEmpty())
-                ? "integrationResult" + connectorProperties.getMqDestinationSeparator() + event.getServiceFullName() : resultDestinationOverride;
+        String destination = integrationResultDestinationBuilder.buildDestination(event);
                 
         return resolver.resolveDestination(destination);
     }
+    
+    
     
 
 }

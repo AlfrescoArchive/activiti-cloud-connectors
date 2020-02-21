@@ -23,6 +23,7 @@ public class IntegrationErrorHandlerImpl implements IntegrationErrorHandler {
         this.integrationErrorSender = integrationErrorSender;
         this.connectorProperties = connectorProperties;
     }
+    
     @Override
     @StreamListener(ERROR_CHANNEL)
     public void handleError(ErrorMessage errorMessage) {

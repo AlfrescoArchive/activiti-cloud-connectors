@@ -6,6 +6,8 @@ import org.activiti.cloud.connectors.starter.channels.IntegrationErrorHandler;
 import org.activiti.cloud.connectors.starter.channels.IntegrationErrorHandlerImpl;
 import org.activiti.cloud.connectors.starter.channels.IntegrationErrorSender;
 import org.activiti.cloud.connectors.starter.channels.IntegrationErrorSenderImpl;
+import org.activiti.cloud.connectors.starter.channels.IntegrationResultDestinationBuilder;
+import org.activiti.cloud.connectors.starter.channels.IntegrationResultDestinationBuilderImpl;
 import org.activiti.cloud.connectors.starter.channels.IntegrationResultSender;
 import org.activiti.cloud.connectors.starter.channels.IntegrationResultSenderImpl;
 import org.activiti.cloud.connectors.starter.channels.ProcessRuntimeChannels;
@@ -35,9 +37,15 @@ public class ActivitiCloudConnectorAutoConfiguration {
     
     @Bean
     @ConditionalOnMissingBean
+    public IntegrationResultDestinationBuilder integrationResultDestinationBuilder(ConnectorProperties connectorProperties) {
+        return new IntegrationResultDestinationBuilderImpl(connectorProperties);
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean
     public IntegrationChannelResolver integrationChannelResolver(BinderAwareChannelResolver resolver,
-                                                           ConnectorProperties connectorProperties) {
-        return new IntegrationChannelResolverImpl(resolver, connectorProperties);
+                                                                 IntegrationResultDestinationBuilder integrationResultDestinationBuilder) {
+        return new IntegrationChannelResolverImpl(resolver, integrationResultDestinationBuilder);
     }
     
     @Bean
