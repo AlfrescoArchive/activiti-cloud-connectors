@@ -17,31 +17,26 @@
 package org.activiti.cloud.connectors.starter.channels;
 
 import org.activiti.cloud.api.process.model.IntegrationError;
-import org.activiti.cloud.connectors.starter.configuration.ConnectorProperties;
+import org.activiti.cloud.api.process.model.IntegrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 
 public class IntegrationErrorSenderImpl implements IntegrationErrorSender {
 
-    @Value("${ACT_INT_RES_CONSUMER:}")
-    private String resultDestinationOverride;
-
-    private final BinderAwareChannelResolver resolver;
-
-    private final ConnectorProperties connectorProperties;
+    private final IntegrationChannelResolver resolver;
 
     @Autowired
-    public IntegrationErrorSenderImpl(BinderAwareChannelResolver resolver, ConnectorProperties connectorProperties) {
+    public IntegrationErrorSenderImpl(IntegrationChannelResolver resolver) {
         this.resolver = resolver;
-        this.connectorProperties = connectorProperties;
     }
 
     @Override
     public void send(Message<IntegrationError> message) {
-        String destination = (resultDestinationOverride == null || resultDestinationOverride.isEmpty())
-                ? "integrationResult" + connectorProperties.getMqDestinationSeparator() + message.getPayload().getIntegrationRequest().getServiceFullName() : resultDestinationOverride;
-        resolver.resolveDestination(destination).send(message);
+        IntegrationRequest request = message.getPayload().getIntegrationRequest();
+        
+        MessageChannel destination = resolver.resolveDestination(request);
+        
+        destination.send(message);
     }
 }
