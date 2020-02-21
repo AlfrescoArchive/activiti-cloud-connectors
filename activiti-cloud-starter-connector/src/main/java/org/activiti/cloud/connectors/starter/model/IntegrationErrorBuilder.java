@@ -29,14 +29,11 @@ public class IntegrationErrorBuilder {
 
     private IntegrationRequest requestEvent;
     private IntegrationRequest integrationRequest;
-    private ConnectorProperties connectorProperties;
     private IntegrationErrorImpl integrationResult;
     private Exception error;
 
-    private IntegrationErrorBuilder(IntegrationRequest integrationRequest, 
-                                    ConnectorProperties connectorProperties) {
+    private IntegrationErrorBuilder(IntegrationRequest integrationRequest) {
         this.integrationRequest = integrationRequest;
-        this.connectorProperties = connectorProperties;
     }
 
     private IntegrationErrorBuilder(IntegrationRequest integrationRequest, 
@@ -58,10 +55,8 @@ public class IntegrationErrorBuilder {
 
     }
 
-    public static IntegrationErrorBuilder errorFor(IntegrationRequest integrationRequest, 
-                                                   ConnectorProperties connectorProperties) {
-        return new IntegrationErrorBuilder(integrationRequest,
-                                           connectorProperties);
+    public static IntegrationErrorBuilder errorFor(IntegrationRequest integrationRequest) {
+        return new IntegrationErrorBuilder(integrationRequest);
     }
 
     public IntegrationErrorBuilder withError(Exception error) {
