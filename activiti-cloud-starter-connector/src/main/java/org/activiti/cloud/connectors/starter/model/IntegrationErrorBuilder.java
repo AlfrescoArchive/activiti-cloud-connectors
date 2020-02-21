@@ -28,8 +28,7 @@ import org.springframework.messaging.support.MessageBuilder;
 public class IntegrationErrorBuilder {
 
     private IntegrationRequest requestEvent;
-    private IntegrationRequest integrationRequest;
-    private IntegrationErrorImpl integrationResult;
+    private IntegrationErrorImpl integrationError;
     private Exception error;
 
     private IntegrationErrorBuilder(IntegrationRequest integrationRequest, 
@@ -37,16 +36,16 @@ public class IntegrationErrorBuilder {
                                     Exception error) {
         this.requestEvent = integrationRequest;
         
-        this.integrationResult = new IntegrationErrorImpl(integrationRequest, 
+        this.integrationError = new IntegrationErrorImpl(integrationRequest, 
                                                           integrationRequest.getIntegrationContext(), 
                                                           error);
         if(connectorProperties != null) {
-            this.integrationResult.setAppName(connectorProperties.getAppName());
-            this.integrationResult.setAppVersion(connectorProperties.getAppVersion());
-            this.integrationResult.setServiceFullName(connectorProperties.getServiceFullName());
-            this.integrationResult.setServiceType(connectorProperties.getServiceType());
-            this.integrationResult.setServiceVersion(connectorProperties.getServiceVersion());
-            this.integrationResult.setServiceName(connectorProperties.getServiceName());
+            this.integrationError.setAppName(connectorProperties.getAppName());
+            this.integrationError.setAppVersion(connectorProperties.getAppVersion());
+            this.integrationError.setServiceFullName(connectorProperties.getServiceFullName());
+            this.integrationError.setServiceType(connectorProperties.getServiceType());
+            this.integrationError.setServiceVersion(connectorProperties.getServiceVersion());
+            this.integrationError.setServiceName(connectorProperties.getServiceName());
         }
     }
 
@@ -61,7 +60,7 @@ public class IntegrationErrorBuilder {
     public IntegrationError build() {
         Objects.requireNonNull(error);
         
-        return integrationResult;
+        return integrationError;
     }
 
     public Message<IntegrationError> buildMessage() {
