@@ -61,9 +61,7 @@ public class IntegrationErrorBuilder {
     public IntegrationError build() {
         Objects.requireNonNull(error);
         
-        return new IntegrationErrorImpl(integrationRequest, 
-                                        integrationRequest.getIntegrationContext(), 
-                                        error);
+        return integrationResult;
     }
 
     public Message<IntegrationError> buildMessage() {

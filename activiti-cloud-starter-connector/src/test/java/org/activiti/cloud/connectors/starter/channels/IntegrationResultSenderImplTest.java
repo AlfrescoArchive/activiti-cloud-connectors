@@ -24,7 +24,6 @@ import org.activiti.api.runtime.model.impl.IntegrationContextImpl;
 import org.activiti.cloud.api.process.model.IntegrationResult;
 import org.activiti.cloud.api.process.model.impl.IntegrationRequestImpl;
 import org.activiti.cloud.api.process.model.impl.IntegrationResultImpl;
-import org.activiti.cloud.connectors.starter.configuration.ConnectorProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -43,9 +42,6 @@ public class IntegrationResultSenderImplTest {
     
     @Mock
     private MessageChannel messageChannel;
-
-    @Mock
-    private ConnectorProperties connectorProperties;
 
     @Before
     public void setUp() throws Exception {
