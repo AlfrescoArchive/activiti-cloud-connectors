@@ -6,14 +6,12 @@ import org.activiti.cloud.connectors.starter.configuration.ConnectorProperties;
 import org.activiti.cloud.connectors.starter.model.IntegrationErrorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.messaging.support.MessageBuilder;
 
 public class IntegrationErrorHandlerImpl implements IntegrationErrorHandler {
     private static Logger logger = LoggerFactory.getLogger(IntegrationErrorHandlerImpl.class);
-    private static final String ERROR_CHANNEL = "errorChannel";
     
     private final IntegrationErrorSender integrationErrorSender;
     private final ConnectorProperties connectorProperties;
@@ -25,8 +23,7 @@ public class IntegrationErrorHandlerImpl implements IntegrationErrorHandler {
     }
     
     @Override
-    @StreamListener(ERROR_CHANNEL)
-    public void handleError(ErrorMessage errorMessage) {
+    public void handleErrorMessage(ErrorMessage errorMessage) {
         
         Throwable errorMessagePayload = errorMessage.getPayload();
         Message<?> originalMessage = errorMessage.getOriginalMessage();

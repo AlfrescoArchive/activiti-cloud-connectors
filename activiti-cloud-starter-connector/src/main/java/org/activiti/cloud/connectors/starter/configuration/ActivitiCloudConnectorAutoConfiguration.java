@@ -1,5 +1,6 @@
 package org.activiti.cloud.connectors.starter.configuration;
 
+import org.activiti.cloud.connectors.starter.channels.ErrorChannelStreamListener;
 import org.activiti.cloud.connectors.starter.channels.IntegrationChannelResolver;
 import org.activiti.cloud.connectors.starter.channels.IntegrationChannelResolverImpl;
 import org.activiti.cloud.connectors.starter.channels.IntegrationErrorHandler;
@@ -33,6 +34,12 @@ public class ActivitiCloudConnectorAutoConfiguration {
                                                            ConnectorProperties connectorProperties) {
         return new IntegrationErrorHandlerImpl(integrationErrorSender,
                                                connectorProperties);
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean
+    public ErrorChannelStreamListener errorChannelStreamListener(IntegrationErrorHandler integrationErrorHandler) {
+        return new ErrorChannelStreamListener(integrationErrorHandler);
     }
     
     @Bean
